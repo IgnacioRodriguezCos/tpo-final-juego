@@ -7,12 +7,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="game-area"></div>
-    <div id="scoreboard">
+    <!-- Menú de inicio -->
+    <div id="start-menu">
+        <h1>Juego de Disparos</h1>
+        <button class="level-button" id="easy-button">Fácil</button>
+        <button class="level-button" id="medium-button">Medio</button>
+        <button class="level-button" id="hard-button">Difícil</button>
+    </div>
+
+    <!-- Área de juego -->
+    <div id="game-area" style="display: none;"></div>
+    <div id="scoreboard" style="display: none;">
         Puntos: 0 | Vidas: 3
         <button id="mute-button">🔊</button>
     </div>
-    <div id="damage-overlay"></div>
+    <div id="damage-overlay" style="display: none;"></div>
 
     <script src="script.js"></script>
 </body>
