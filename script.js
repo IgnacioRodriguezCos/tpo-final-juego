@@ -1,127 +1,185 @@
 const gameArea = document.getElementById('game-area');
 const scoreboard = document.getElementById('scoreboard');
 const muteButton = document.getElementById('mute-button');
+const startMenu = document.getElementById('start-menu');
 let score = 0;
 let lives = 3;
+let level = 'easy'; // Nivel inicial
+let spawnInterval = 1000; // Intervalo de aparición de enemigos
+let spawnTimer;
+let gameStartTime = Date.now();
 
 // Cargar sonidos
-const loseLifeSound = new Audio('sonidos/enemy-sound.mp3'); // Sonido al perder una vida
-const backgroundMusic = new Audio('sonidos/background.mp3'); // Canción de fondo
-backgroundMusic.loop = true; // Asegura que la música se repita
-backgroundMusic.volume = 0.5; // Ajusta el volumen si es necesario
+const loseLifeSound = new Audio('sonidos/enemy-sound.mp3');
+const backgroundMusic = new Audio('sonidos/background.mp3');
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.5;
 
-// Iniciar música de fondo
 backgroundMusic.play();
 
-// Actualizar el marcador
 function updateScoreboard() {
     scoreboard.firstChild.textContent = `Puntos: ${score} | Vidas: ${lives}`;
 }
 
-// Función para mostrar el rectángulo rojo al perder una vida
 function showDamageOverlay() {
-    const damageOverlay = document.getElementById('damage-overlay'); // Asegúrate de seleccionar el elemento
+    const damageOverlay = document.getElementById('damage-overlay');
     if (damageOverlay) {
-        damageOverlay.style.display = 'block'; // Muestra el rectángulo
+        damageOverlay.style.display = 'block';
         setTimeout(() => {
-            damageOverlay.style.display = 'none'; // Oculta el rectángulo después de 300ms
+            damageOverlay.style.display = 'none';
         }, 300);
-    } else {
-        console.error('Elemento damage-overlay no encontrado en el DOM.');
     }
 }
 
-
-// Función para terminar el juego
 function gameOver() {
     alert(`¡Juego terminado! Tu puntaje final es: ${score}`);
-    backgroundMusic.pause(); // Detiene la música cuando el juego termina
-    location.reload(); // Reinicia el juego
+    backgroundMusic.pause();
+    location.reload();
 }
 
-// Función para manejar el botón de silencio
-let isMuted = false; // Estado de la música
+function showVictoryMessage() {
+    const victoryMessage = document.createElement('div');
+    victoryMessage.classList.add('message');
+    victoryMessage.textContent = `¡Ganaste! Tu puntaje final es: ${score}`;
+    gameArea.appendChild(victoryMessage);
+
+    setTimeout(() => {
+        victoryMessage.textContent = 'Volviendo a la pantalla principal...';
+        setTimeout(() => {
+            location.reload(); // Volver a la pantalla principal
+        }, 2000);
+    }, 2000);
+}
+
+let isMuted = false;
 muteButton.addEventListener('click', () => {
-    isMuted = !isMuted; // Cambiar el estado
+    isMuted = !isMuted;
     if (isMuted) {
-        backgroundMusic.pause(); // Pausa la música
-        muteButton.textContent = '🔇'; // Cambia el ícono
+        backgroundMusic.pause();
+        muteButton.textContent = '🔇';
     } else {
-        backgroundMusic.play(); // Reproduce la música
-        muteButton.textContent = '🔊'; // Cambia el ícono
+        backgroundMusic.play();
+        muteButton.textContent = '🔊';
     }
 });
 
-let spawnInterval = 1000; // Intervalo inicial de 1 segundo
-let spawnTimer; // Para controlar el intervalo de generación de enemigos
-let gameStartTime = Date.now(); // Tiempo de inicio del juego
-
 // Función para generar enemigos
 function spawnEnemy() {
-    if (lives <= 0) return; // Detener generación de enemigos si el juego ha terminado
+    if (lives <= 0) return;
 
-    const enemy = document.createElement('img'); // Crear un elemento de imagen
+    const enemy = document.createElement('img');
     enemy.classList.add('enemy');
-    enemy.src = 'imagenes/stormtrooper.png'; // Cambia esta ruta por la de tu imagen
+    enemy.src = 'imagenes/stormtrooper.png';
 
-    // Posición aleatoria con límites
-    const enemySize = 100;
+    // Tamaño de los enemigos según el nivel
+    const enemySize = level === 'easy' ? 180 : level === 'medium' ? 180 : 180;
+
+    // Posiciones aleatorias para los enemigos
     const x = Math.random() * (window.innerWidth - enemySize);
-    const y = Math.random() * (window.innerHeight - enemySize - 100);
+    const y = Math.random() * (window.innerHeight - enemySize - 100); // Deja un espacio por arriba
+    enemy.style.position = 'absolute';
     enemy.style.left = `${x}px`;
     enemy.style.top = `${y}px`;
+    enemy.style.width = `${enemySize}px`;
+    enemy.style.height = `${enemySize}px`;
 
-    // Función para reproducir el sonido del clic en enemigo
     function playHitSound() {
-        const hitSound = new Audio('sonidos/player-sound.mp3'); // Sonido al presionar el enemigo
-        hitSound.play(); // Reproducir el sonido
+        const hitSound = new Audio('sonidos/player-sound.mp3');
+        hitSound.play();
     }
-    
-    // Evento de clic para eliminar enemigo
+
     enemy.addEventListener('click', () => {
         score++;
-        if (!isMuted) playHitSound(); // Reproducir sonido de disparo si no está silenciado
+        if (!isMuted) playHitSound();
         updateScoreboard();
+
+        // Verificar si el jugador ganó (20 enemigos eliminados)
+        if (score >= 20) {
+            showVictoryMessage();
+        }
+
         enemy.remove();
     });
 
     gameArea.appendChild(enemy);
 
-    // Restar una vida si no se elimina el enemigo en 3 segundos
     setTimeout(() => {
         if (gameArea.contains(enemy)) {
-            showDamageOverlay(); // Muestra el rectángulo rojo
+            showDamageOverlay();
             lives--;
-            updateScoreboard(); // Actualiza el marcador antes de verificar el estado del juego
+            updateScoreboard();
             enemy.remove();
-            if (!isMuted) loseLifeSound.play(); // Reproducir sonido de pérdida de vida si no está silenciado
+            if (!isMuted) loseLifeSound.play();
 
             if (lives <= 0) {
                 setTimeout(() => {
-                    gameOver(); // Llama a gameOver con un pequeño retraso
-                }, 100); // Retraso de 100ms para asegurar la actualización del DOM
+                    gameOver();
+                }, 100);
             }
         }
     }, 3000);
 }
 
-// Cambiar la frecuencia de aparición de los enemigos después de 2 minutos
+// Función para ajustar la frecuencia de aparición de los enemigos según el nivel
 function adjustEnemySpawnFrequency() {
-    const elapsedTime = Date.now() - gameStartTime; // Tiempo transcurrido desde el inicio
-    if (elapsedTime >= 120000) { // Si han pasado 2 minutos (120000 ms)
-        if (spawnInterval > 500) { // Cambiar la frecuencia a la mitad si es mayor de 500ms
-            spawnInterval = 500;
-            clearInterval(spawnTimer); // Detener el intervalo anterior
-            spawnTimer = setInterval(spawnEnemy, spawnInterval); // Iniciar nuevo intervalo más rápido
-        }
+    switch (level) {
+        case 'easy':
+            spawnInterval = 1000;
+            break;
+        case 'medium':
+            spawnInterval = 800;
+            break;
+        case 'hard':
+            spawnInterval = 600;
+            break;
     }
+
+    clearInterval(spawnTimer);
+    spawnTimer = setInterval(spawnEnemy, spawnInterval);
 }
 
-// Iniciar la generación de enemigos
-spawnTimer = setInterval(spawnEnemy, spawnInterval);
+function startGame(levelSelected) {
+    level = levelSelected;
+    startMenu.style.display = 'none';
+    gameArea.style.display = 'block';
+    scoreboard.style.display = 'block';
+    spawnInterval = 1000;
+    spawnTimer = setInterval(spawnEnemy, spawnInterval);
+    adjustEnemySpawnFrequency();
+}
 
-// Llamar a la función para ajustar la frecuencia cada segundo
-setInterval(adjustEnemySpawnFrequency, 1000);
+document.getElementById('easy-button').addEventListener('click', () => startGame('easy'));
+document.getElementById('medium-button').addEventListener('click', () => startGame('medium'));
+document.getElementById('hard-button').addEventListener('click', () => startGame('hard'));
 
-// Inicializar marcador
+// Función para pausar el juego con la tecla ESC
+let isPaused = false;
+
+function togglePause() {
+    if (isPaused) {
+        spawnTimer = setInterval(spawnEnemy, spawnInterval);
+        backgroundMusic.play();
+    } else {
+        clearInterval(spawnTimer);
+        backgroundMusic.pause();
+    }
+    isPaused = !isPaused;
+
+    // Mostrar mensaje de pausa
+    const pauseMessage = document.createElement('div');
+    pauseMessage.classList.add('message');
+    pauseMessage.textContent = 'PAUSA';
+    gameArea.appendChild(pauseMessage);
+
+    setTimeout(() => {
+        pauseMessage.remove();
+    }, 1500);
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        togglePause();
+    }
+});
+
 updateScoreboard();
