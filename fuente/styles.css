@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: url('https://wallpaperaccess.com/full/6234765.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.nivel2-background {
+    background: url('https://www.infobae.com/resizer/v2/https%3A%2F%2Fs3.amazonaws.com%2Farc-wordpress-client-uploads%2Finfobae-wp%2Fwp-content%2Fuploads%2F2016%2F11%2F29102538%2FAnakins_Crossroads-1024x575.png?auth=12f84707c4502c7529f464ed79b57d94c9077eb3a373a9a62ad03f89809afcf7&smart=true&width=992&height=558&quality=85') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+}
+.nivel3-background {
+    background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5JJGdp94ojs4xgciXE6lQnvcbAl3Sf95NzEaDaSaNEwcm7TjvbDAHwSINDf3lGXdcRyiAg0fvzepgpq3dOS9X7jv498skzMXQ3eliBWNxeWd3bcOw-80p1b6A0i_Z5mqyQ7ZBmGWJdjw/s1600/1iLYq.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+}
+#start-menu {
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.level-button {
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.level-button:hover {
+    background-color: #666;
+}
+
+#scoreboard {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#damage-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+#mute-button {
+    font-size: 16px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#mute-button:hover {
+    background-color: #666;
+}
+.message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+}
+.enemy {
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+

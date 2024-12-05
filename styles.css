@@ -1,7 +1,7 @@
 body {
     margin: 0;
     overflow: hidden;
-    background: url('https://wallpaperaccess.com/full/6234765.jpg') no-repeat center center fixed;
+    background-image: url(imagenes/Menu.jpg);
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -9,32 +9,58 @@ body {
     height: 100vh;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+@font-face {
+    font-family: 'MiFuente'; /* Nombre de la fuente que usarás en el CSS */
+    src: url('fuente/SF\ Distant\ Galaxy\ Italic.ttf') format('truetype'); /* Ruta a la fuente */
+    font-weight: normal;
+    font-style: normal;
+}
+
 #start-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    background: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente para contraste */
     color: white;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
+    font-family: 'MiFuente'; /* Fuente personalizada */
+    z-index: 100; /* Aseguramos que el menú esté encima del fondo */
 }
 
 h1 {
-    font-size: 40px;
+    font-size: 100px;
     margin-bottom: 20px;
 }
 
+/* Estilos para los botones */
 .level-button {
-    font-size: 20px;
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: #444;
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 50px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'MiFuente';
 }
 
 .level-button:hover {
-    background-color: #666;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
 }
 
 #scoreboard {
@@ -88,6 +114,7 @@ h1 {
 .enemy {
     position: absolute;
     transition: all 0.3s ease;
+    user-select: none; 
 }
 
 
