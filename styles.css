@@ -53,7 +53,7 @@ h1 {
     padding: 15px 30px;
     margin: 10px;
     font-size: 50px;
-    cursor: pointer;
+    cursor: url('imagenes/miramenu.png'), pointer; /* Cursor personalizado */
     transition: all 0.3s ease;
     font-family: 'MiFuente';
 }
@@ -61,7 +61,9 @@ h1 {
 .level-button:hover {
     background: rgba(255, 255, 255, 0.5);
     transform: scale(1.1);
+    cursor: url('imagenes/miramenu.png'), pointer; /* Cursor personalizado */
 }
+
 
 #scoreboard {
     position: fixed;
@@ -103,7 +105,6 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 20px;
     font-size: 24px;
@@ -111,10 +112,20 @@ h1 {
     text-align: center;
     z-index: 1000;
 }
+
+.message-game-over {
+    background-color: rgba(253, 0, 0, 0.7); /* Rojo */
+}
+
+.message-victory {
+    background-color: rgba(0, 253, 0, 0.7); /* Verde */
+}
+
 .enemy {
     position: absolute;
     transition: all 0.3s ease;
-    user-select: none; 
+    user-select: none;
+    pointer-events: auto; /* Asegura que el elemento responda a clics */
 }
 
 

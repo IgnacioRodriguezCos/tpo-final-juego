@@ -14,10 +14,10 @@ let isGameOver = false; // Variable para controlar si el juego ha terminado
 let backgroundMusic = new Audio();
 let loseLifeSound = new Audio();
 const hitSound = new Audio('sonidos/player-sound.mp3');
-backgroundMusic.src = 'sonidos/menu.mp3';
+backgroundMusic.src = 'sonidos/menu.mp3'
 backgroundMusic.currentTime = 11;
-
 backgroundMusic.play();
+document.body.style.cursor = 'url("imagenes/miramenu.png"), auto';
 
 function updateScoreboard() {
     scoreboard.firstChild.textContent = `Puntos: ${score} | Vidas: ${lives}`;
@@ -36,7 +36,7 @@ function showDamageOverlay() {
 function gameOver() {
     // Crear y mostrar el mensaje de Game Over
     const gameOverMessage = document.createElement('div');
-    gameOverMessage.classList.add('message');
+    gameOverMessage.classList.add('message', 'message-game-over');
     gameOverMessage.textContent = `¡Juego Terminado! Tu puntaje final es: ${score}`;
     gameArea.appendChild(gameOverMessage);
 
@@ -48,26 +48,26 @@ function gameOver() {
     // Marcar el juego como terminado para evitar más enemigos
     isGameOver = true;
 
-    // Esperar un tiempo antes de mostrar el mensaje de "Volviendo a la pantalla principal..."
+    // Eliminar todos los enemigos de la pantalla inmediatamente
+    const enemies = document.querySelectorAll('.enemy');
+    enemies.forEach(enemy => enemy.remove());
+
+    // Esperar 3 segundos antes de mostrar el mensaje de "Volviendo a la pantalla principal..."
     setTimeout(() => {
         gameOverMessage.textContent = 'Volviendo a la pantalla principal...';
 
-        // Eliminar todos los enemigos de la pantalla
-        const enemies = document.querySelectorAll('.enemy');
-        enemies.forEach(enemy => enemy.remove());
-
-        // Volver a la pantalla principal después de 2 segundos
+        // Volver a la pantalla principal después de 3 segundos
         setTimeout(() => {
             location.reload(); // Recargar la página y volver al menú
-        }, 2000);
-    }, 2000); // Mostrar el mensaje de Game Over por 2 segundos
+        }, 3000);
+    }, 3000); // Mostrar el mensaje de Game Over por 3 segundos
 }
 
 
 function showVictoryMessage() {
     // Crear y mostrar el mensaje de victoria
     const victoryMessage = document.createElement('div');
-    victoryMessage.classList.add('message');
+    victoryMessage.classList.add('message', 'message-victory');
     victoryMessage.textContent = `¡Ganaste! Tu puntaje final es: ${score}`;
     gameArea.appendChild(victoryMessage);
 
@@ -79,19 +79,19 @@ function showVictoryMessage() {
     // Marcar el juego como terminado para evitar más enemigos
     isGameOver = true;
 
-    // Esperar un tiempo antes de mostrar el mensaje de "Volviendo a la pantalla principal..."
+    // Eliminar todos los enemigos de la pantalla inmediatamente
+    const enemies = document.querySelectorAll('.enemy');
+    enemies.forEach(enemy => enemy.remove());
+
+    // Esperar 3 segundos antes de mostrar el mensaje de "Volviendo a la pantalla principal..."
     setTimeout(() => {
         victoryMessage.textContent = 'Volviendo a la pantalla principal...';
 
-        // Eliminar todos los enemigos de la pantalla
-        const enemies = document.querySelectorAll('.enemy');
-        enemies.forEach(enemy => enemy.remove());
-
-        // Volver a la pantalla principal después de 2 segundos
+        // Volver a la pantalla principal después de 3 segundos
         setTimeout(() => {
             location.reload(); // Recargar la página y volver al menú
-        }, 2000);
-    }, 2000); // Mostrar el mensaje de victoria por 2 segundos
+        }, 3000);
+    }, 3000); // Most
 }
 
 
@@ -127,18 +127,20 @@ function updateSounds() {
 function updateBackground() {
     if (level === 'easy') {
         document.body.style.background = 'url("imagenes/DS1.webp") no-repeat center center fixed';
+        document.body.style.cursor = 'url("imagenes/mira.png"), auto';
     } else if (level === 'medium') {
         document.body.style.background = 'url("imagenes/hoth.jpg") no-repeat center center fixed';
         document.body.style.backgroundSize = 'cover';
+        document.body.style.cursor = 'url("imagenes/mira.png"), auto';
     } else if (level === 'hard') {
         document.body.style.background = "url('imagenes/DS2.webp') no-repeat center center fixed"; 
         document.body.style.backgroundSize = 'cover';
+        document.body.style.cursor = 'url("imagenes/mira.png"), auto';
     }
     updateSounds();
 }
 
 // Llamar a esta función después de que el jugador haya seleccionado el nivel
-// Ejemplo de cómo se puede usar:
 document.getElementById('easy-button').addEventListener('click', () => {
     level = 'easy';
     updateBackground(); // Cambiar fondo al seleccionar nivel fácil
@@ -177,6 +179,9 @@ function spawnEnemy() {
     let enemySize = 180;
     let enemyType = 'normal';  // Tipo de enemigo (normal o doble clic)
     let clickCount = 0;  // Contador de clics para los enemigos de tipo doble clic
+    let hitImage; // Imagen que aparece tras el primer clic
+
+    enemy.draggable = false;
 
     // En nivel easy solo generamos enemigos normales
     if (level === 'easy') {
@@ -189,6 +194,7 @@ function spawnEnemy() {
     else if (level === 'medium') {
         if (Math.random() < 0.3) {  // 30% de probabilidad
             enemyImage = 'imagenes/atat.webp';  // Imagen del enemigo de doble clic
+            hitImage = 'imagenes/atat-damaged.webp'; // Imagen tras el primer clic
             enemyType = 'doubleClick';
             enemy.style.width = `${enemySize}px`;
             enemy.style.height = `${enemySize + 100}px`;
@@ -203,6 +209,7 @@ function spawnEnemy() {
     else if (level === 'hard') {
         if (Math.random() < 0.2) {  // 40% de probabilidad de que sea de tipo doble clic
             enemyImage = 'imagenes/ISD.webp';
+            hitImage = 'imagenes/ISD-damaged.webp'; // Imagen tras el primer clic
             enemyType = 'doubleClick';
             enemy.style.width = `${enemySize+100}px`;
             enemy.style.height = `${enemySize}px`;
@@ -227,7 +234,8 @@ function spawnEnemy() {
     // Función para reproducir el sonido de impacto
     function playHitSound() {
         if (!isMuted) {
-            const hitSound = new Audio('sonidos/player-sound.mp3');
+            // Reiniciar el sonido al principio y reproducirlo
+            hitSound.currentTime = 0;
             hitSound.play().catch(error => {
                 console.error('No se pudo reproducir el sonido:', error);
             });
@@ -237,6 +245,11 @@ function spawnEnemy() {
     // Acción al hacer clic en el enemigo
     enemy.addEventListener('click', () => {
         clickCount++;  // Aumentar el contador de clics
+
+        if (enemyType === 'doubleClick' && clickCount === 1) {
+            enemy.src = hitImage;
+            playHitSound();
+        }
 
         // Si el enemigo es de tipo doble clic, solo se elimina después de 2 clics
         if (enemyType === 'doubleClick' && clickCount === 2) {
@@ -298,23 +311,32 @@ function spawnEnemy() {
         }, 20); // Actualizar cada 20 ms
     }
 
-    // Timeout para eliminar el enemigo si no fue clickeado después de 3 segundos
+    function playLoseLifeSound() {
+        if (!isMuted && loseLifeSound.src) { // Asegurarse de que tenga una fuente configurada
+            loseLifeSound.currentTime = 0; // Reiniciar el sonido al principio
+            loseLifeSound.play().catch(error => {
+                console.error('No se pudo reproducir el sonido:', error);
+            });
+        }
+    }
+    
+    // Uso en tu código
     setTimeout(() => {
         if (gameArea.contains(enemy)) {
             showDamageOverlay();
             lives--;
             updateScoreboard();
             enemy.remove(); // Eliminar el enemigo de la pantalla
-
-            if (!isMuted) loseLifeSound.play(); // Reproducir sonido de perder vida
-
+    
+            playLoseLifeSound(); // Reproducir sonido de perder vida
+    
             if (lives <= 0) {
                 setTimeout(() => {
                     gameOver(); // Finalizar el juego si las vidas llegan a 0
                 }, 100);
             }
         }
-    }, 3000); // 3000 ms de tiempo antes de eliminar al enemigo
+    }, 3000);    
 }
 
 // Función para ajustar la frecuencia de aparición de los enemigos según el nivel
